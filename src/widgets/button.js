@@ -794,8 +794,8 @@ export var ImguiButtonMixin =
             return null;
     },
 
-    Image(url, size, uv0=null, uv1=null, tint_col=null,
-            border_col=null, bg_col = null, onError=null)
+    Image(url_or_img, size, uv0=null, uv1=null, tint_col=null,
+          border_col=null, bg_col = null, onError=null)
     {
         let win = this.getCurrentWindow();
         let bb = new Rect(win.DC.CursorPos,
@@ -805,7 +805,7 @@ export var ImguiButtonMixin =
         this.itemSize(bb);
         if (!this.itemAdd(bb, 0))
             return;
-        let img = this.getImage(url, onError);
+        let img = (typeof url_or_img === 'string') ? this.getImage(url, onError) : url_or_img;
         if(bg_col != null && bg_col.a > 0)
             win.DrawList.AddRectFilled(bb.Min, bb.Max, bg_col, 0);
         if (border_col != null && border_col.a > 0)

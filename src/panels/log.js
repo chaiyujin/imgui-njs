@@ -49,7 +49,7 @@ export class LogWindow
         if(!Singleton)
         {
             Singleton = this;
-            this.bindConsole(true);
+            // this.bindConsole(true);
         }
         console.debug("Starting Log");
     }

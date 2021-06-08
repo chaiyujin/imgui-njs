@@ -5,14 +5,22 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="../example/www/index.css" rel="stylesheet">
+    <!-- <link href="../example/www/index.css" rel="stylesheet"> -->
     <link href="../example/www/fonts.css" rel="stylesheet">
 </head>
 
 <body>
+
 <!-- no title bar -->
 <div id="BgdDiv" class="FullScreen"></div>
-<canvas id="AppCanvas" class="FullScreen"></canvas>
+<canvas id="AppCanvas" width=1024 height=512 style="background-color: black;"></canvas>
+<video width="640" height="360" playsinline preload="auto" hidden></video>
+<br/>
+Start <button type="button">⏯</button> playing the video. Pause the video to read the metadata.
+Forward Frame <button type="button" id="forward">⏩</button> <br/>
+Backward Frame <button type="button" id="backward">⏪</button> 
+<p><span id="fps-info">0</span> Frames</p>
+<p><pre id="metadata-info"></pre></p>
 
 <!--  scripts ----------------------------------------------------------->
 
