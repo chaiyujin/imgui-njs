@@ -1,77 +1,36 @@
-var App = new Application('AppCanvas', 'ImGuiPlayer');
-var App1 = new Application('AppCanvas1', 'ImGuiPlayer1');
+// self executing function here
+(function() {
+  // your page initialization code here
+  // the DOM will be available here
+  let HAS_VIDEO_FRAME_CALLBACK = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
 
-function onLoaded()
-{
-    App1.Begin((err) => { window.requestAnimationFrame(onLoop); });
-}
+  let App  = new ImGuiPlayer(document.getElementById('player-1'));
+  // let App1 = new ImGuiPlayer(document.getElementById('imgui-canvas-2'));
 
-async function onLoop(time)
-{
-    if(App1.OnLoop(time)) {
-      window.requestAnimationFrame(onLoop);
-    }
-    else
-    {
-        console.log("render thread done");
-        App1.End();
-    }
-}
+  function onLoaded()
+  {
+    App.Begin();
+    // App1.Begin();
+    window.requestAnimationFrame(onLoop);
+  }
 
-document.addEventListener("DOMContentLoaded", onLoaded, false);
+  async function onLoop(time) {
+    App.OnLoop(time);
+    // App1.OnLoop(time);
+    window.requestAnimationFrame(onLoop);
+    // if(App.OnLoop(time)) { App1.OnLoop(time);
+    // }
+    // else
+    // {
+    //   console.log("render thread done");
+    //   App.End();
+    // }
+  }
 
-// =====================================================================================================================
-// Video Player
-// =====================================================================================================================
+  document.addEventListener("DOMContentLoaded", onLoaded, false);
 
-const startDrawing = () => { 
-  const button = document.querySelector("button");
-  const forwardButton = document.getElementById("forward");
-  const backwardButton = document.getElementById("backward");
-
-  const video = document.querySelector("video");
-  const canvas = document.querySelector("canvas");
-  const ctx = canvas.getContext("2d");
-  const fpsInfo = document.querySelector("#fps-info");
-  const metadataInfo =  document.querySelector("#metadata-info");
-  let currentFrame = 0
-  let mediaTime;
-  let width = canvas.width;
-  let height = canvas.height;
-  
-  let paintCount = 0;
-  let startTime = 0.0;
-  let fps = 23.976
-  
-  button.addEventListener('click', () => video.paused ? video.play() : video.pause());
-  forwardButton.addEventListener('click', () => {video.currentTime = video.currentTime + 1/fps});
-  backwardButton.addEventListener('click', () => {video.currentTime = video.currentTime - 1/fps});
-
-  video.addEventListener('play', () => {
-    if (!('requestVideoFrameCallback' in HTMLVideoElement.prototype)) {
-      return alert('Your browser does not support the `Video.requestVideoFrameCallback()` API.');
-    }    
-  });
-
-  const updateCanvas = (now, metadata) => {
-    if (startTime === 0.0) {
-      startTime = now;
-    }
-    
-    // ctx.drawImage(video, 0, 0, width, height);
-    App.player.frame_image = video
-    
-    let frameOffset = 2
-    currentFrame = Math.round(metadata.mediaTime  * fps) - frameOffset // +1 is added if you count frame 0 as frame 1... Semantics
-    mediaTime = metadata.mediaTime
-    fpsInfo.innerText = currentFrame;
-    metadataInfo.innerText = JSON.stringify(metadata, null, 2);
-
-    video.requestVideoFrameCallback(updateCanvas);
-  };  
-  video.src =
-    "./test.mp4";
-  video.requestVideoFrameCallback(updateCanvas);  
-};
-
-window.addEventListener('load', startDrawing);
+  // Tell user about lacking of API.
+  if (!HAS_VIDEO_FRAME_CALLBACK) {
+    return alert('Your browser does not support the `Video.requestVideoFrameCallback()` API.');
+  }
+})();

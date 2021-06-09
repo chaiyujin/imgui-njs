@@ -14,7 +14,7 @@ import {FileSystem} from "./filesystem.js";
 
 export default class ImguiApp
 {
-    constructor(appname="UntitledImguiApp", version="1.0.0", initLog=true)
+    constructor(canvas, appname="UntitledImguiApp", version="1.0.0", initLog=true)
     {
         console.debug("App Init " + new Date().toLocaleString());
         this.appname = appname;
@@ -24,7 +24,7 @@ export default class ImguiApp
         this.runtime = (window.process && window.process.type) ? "electron" 
                         : (window.cordova) ? "cordova" : "browser";
         this.filesystem = new FileSystem(this.runtime);
-        this.canvas = document.getElementById("AppCanvas");
+        this.canvas = canvas
         if(!this.canvas)
         {
             alert("Can't find canvas element named AppCanvas");

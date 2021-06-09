@@ -7,26 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- <link href="../example/www/index.css" rel="stylesheet"> -->
     <link href="../example/www/fonts.css" rel="stylesheet">
+
+    <script src="./imgui.min.js" > </script>
+    <script src="./player.js" > </script>
 </head>
 
 <body>
 
 <!-- no title bar -->
-<div id="BgdDiv" class="FullScreen"></div>
-<canvas id="AppCanvas" width=1024 height=512 style="background-color: black;"></canvas>
-<canvas id="AppCanvas1" width=1024 height=512 style="background-color: red;"></canvas>
-<video width="640" height="360" playsinline preload="auto" hidden></video>
-<br/>
-Start <button type="button">⏯</button> playing the video. Pause the video to read the metadata.
-Forward Frame <button type="button" id="forward">⏩</button> <br/>
-Backward Frame <button type="button" id="backward">⏪</button> 
-<p><span id="fps-info">0</span> Frames</p>
-<p><pre id="metadata-info"></pre></p>
+
+<div class='imgui-player' id='player-1'>
+    <div class='mediagroup' id='group0' fps='23.976'>
+        <video id='video0' playsinline preload="auto" hidden src="./test.mp4"></video>
+        <video id='video1' playsinline preload="auto" hidden src="./test.mp4"></video>
+    </div>
+</div>
+
+<!-- <canvas id="imgui-canvas-2" width=1024 height=512 style="background-color: black;"></canvas> -->
 
 <!--  scripts ----------------------------------------------------------->
-
-<script src="./imgui.min.js" > </script>
-<script src="./app.js" > </script>
 <script src="./index.js" > </script>
 </body>
 </html>
