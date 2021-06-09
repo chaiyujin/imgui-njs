@@ -68,6 +68,8 @@ export var ImguiComboMixin =
         if (!this.itemAdd(total_bb, id, frame_bb))
             return false;
 
+        let open_pos = this.GetCursorPos();
+
         let hovered = new ValRef(), held = new ValRef();
         let pressed = this.ButtonBehavior(frame_bb, id, hovered, held);
         let popup_open = this.IsPopupOpen(id);
@@ -106,7 +108,7 @@ export var ImguiComboMixin =
         {
             if (win.DC.NavLayerCurrent == 0)
                 win.NavLastIds[0] = id;
-            this.openPopupEx(id);
+            this.openPopupEx(id, open_pos);
             popup_open = true;
         }
 

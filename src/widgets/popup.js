@@ -270,7 +270,7 @@ export var ImguiPopupMixin =
     // OpenPopup and BeginPopup needs to be at the same level). One open
     // popup per level of the popup hierarchy (NB: when assigning we reset
     // the Window member of ImGuiPopupRef to NULL)
-    openPopupEx(id)
+    openPopupEx(id, openPos)
     {
         let g = this.guictx;
         let parent_window = g.CurrentWindow;
@@ -282,7 +282,7 @@ export var ImguiPopupMixin =
         popup_ref.ParentWindow = parent_window;
         popup_ref.OpenFrameCount = g.FrameCount;
         popup_ref.OpenParentId = parent_window.IDStack.back();
-        popup_ref.OpenPopupPos = this.navCalcPreferredRefPos();
+        popup_ref.OpenPopupPos = (openPos === undefined) ? this.navCalcPreferredRefPos() : openPos;
         popup_ref.OpenMousePos = this.IsMousePosValid(g.IO.MousePos) ?
                                     g.IO.MousePos : popup_ref.OpenPopupPos;
 
