@@ -99,9 +99,9 @@ class SimpleTest
 
 class Application extends ImguiApp
 {
-    constructor()
+    constructor(id, appname)
     {
-        super(AppName, AppVersion);
+        super(id, appname, AppVersion);
         this.demo = null;
     }
 
@@ -111,7 +111,7 @@ class Application extends ImguiApp
         {
             if(!err)
             {
-                this.demo = new SimpleTest(this.imgui);
+                this.player = new SimpleTest(this.imgui);
             }
             if(onReady)
                 onReady(err);
@@ -122,7 +122,7 @@ class Application extends ImguiApp
     {
         // there is where cycles are distributed to your widgets
         // ImguiApp owns log and demo windows.
-        if(this.demo)
-            this.demo.Show(imgui);
+        if(this.player)
+            this.player.Show(imgui);
     }
 }

@@ -1,20 +1,20 @@
-var App = new Application();
+var App = new Application('AppCanvas', 'ImGuiPlayer');
+var App1 = new Application('AppCanvas1', 'ImGuiPlayer1');
 
 function onLoaded()
 {
-    App.Begin((err) => {
-        window.requestAnimationFrame(onLoop);
-    });
+    App1.Begin((err) => { window.requestAnimationFrame(onLoop); });
 }
 
 async function onLoop(time)
 {
-    if(App.OnLoop(time))
-        window.requestAnimationFrame(onLoop);
+    if(App1.OnLoop(time)) {
+      window.requestAnimationFrame(onLoop);
+    }
     else
     {
         console.log("render thread done");
-        App.End();
+        App1.End();
     }
 }
 
@@ -59,7 +59,7 @@ const startDrawing = () => {
     }
     
     // ctx.drawImage(video, 0, 0, width, height);
-    App.demo.frame_image = video
+    App.player.frame_image = video
     
     let frameOffset = 2
     currentFrame = Math.round(metadata.mediaTime  * fps) - frameOffset // +1 is added if you count frame 0 as frame 1... Semantics
