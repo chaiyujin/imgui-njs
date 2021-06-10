@@ -24,7 +24,7 @@
   document.addEventListener("DOMContentLoaded", onLoaded, false);
 
   // Tell user about lacking of API.
-  if (!HAS_VIDEO_FRAME_CALLBACK) {
-    return alert('Your browser does not support the `Video.requestVideoFrameCallback()` API.\nPlease use Chrome for better video synchronization!');
-  }
+  // if (!HAS_VIDEO_FRAME_CALLBACK) {
+  //   return alert('Your browser does not support the `Video.requestVideoFrameCallback()` API.\nPlease use Chrome for better video synchronization!');
+  // }
 })();

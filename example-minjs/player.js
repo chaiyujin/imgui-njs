@@ -5,7 +5,7 @@ class _MyVideoPlayer
   constructor(imgui) {
     this.imgui = imgui;
     this.fps = 30.0;
-    this.num_frames = 100;
+    this.num_frames = null;
     this.curr_iframe = 0;
     this.playing = false;
     this.wanna_play_after_release = false;
@@ -14,19 +14,24 @@ class _MyVideoPlayer
     this.tag_list = [];
     this.groups = null;
     this.selected_group = null;
+    this.enabled_syncTime = false;
   }
 
   setGroups(groups) {
     this.groups = groups;
   }
 
-  setVideos(fps, video_or_list, tags) {
+  useGroup(group) {
+    let fps = group.fps
+    let video_or_list = group.videos
+    let tags = group.tags
     // guard null
     if (!video_or_list) { return; }
     // make into array
     if (!Array.isArray(video_or_list)) {
       video_or_list = [video_or_list];
     }
+    this.clearVideos();
     this.video_list = video_or_list
     this.tag_list = tags
     this.rect_list = []
@@ -34,47 +39,65 @@ class _MyVideoPlayer
     console.log('fps is', this.fps);
     for (var i_video = 0; i_video < this.video_list.length; ++i_video) {
       this.rect_list.push({x:0, y:0, w:0, h:0});
+      // should always register
       this._initVideoCallback(i_video, this.video_list[i_video]);
     }
+    this.playing = false;
+    this.curr_iframe = 0;
+  }
+
+  clearVideos() {
+    this.playing = false;
+    this.video_list.forEach(video => {
+      video.pause();
+      video.currentTime = 0;
+    })
+    this.video_list = [];
+    this.num_frames = null;
+  }
+
+  syncTime() {
+    if (this.video_list.length > 0) {
+      this.curr_iframe = Math.floor(this.video_list[0].currentTime * this.fps);
+    }
+    requestAnimationFrame(this.syncTime.bind(this));
   }
 
   _initVideoCallback(index, video) {
-    const updateCanvasVFCb = (now, metadata) => {
-      this.curr_iframe = Math.round(metadata.mediaTime  * this.fps);
-      video.requestVideoFrameCallback(updateCanvasVFCb);
-    };  
-    const syncTime = () => {
-      this.curr_iframe = Math.round(this.video_list[0].currentTime * this.fps);
-      requestAnimationFrame(syncTime);
-    }
     video.currentTime = 0;
     if (index === 0) {
+      // without 'requestVideoFrameCallback'
+      // sync time as soon as possible with requestAnimationFrame
+      if (!('requestVideoFrameCallback' in HTMLVideoElement.prototype) && !this.enabled_syncTime) {
+        this.enabled_syncTime = true;
+        this.syncTime();
+      }
+
+      const updateCanvasVFCb = (now, metadata) => {
+        this.curr_iframe = Math.round(metadata.mediaTime  * this.fps);
+        if (this.video_list.length > 0) {
+          this.video_list[0].requestVideoFrameCallback(updateCanvasVFCb);
+        }
+      }
       // master video
       if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
         video.requestVideoFrameCallback(updateCanvasVFCb);
-      } else {
-        // without 'requestVideoFrameCallback'
-        // sync time as soon as possible with requestAnimationFrame
-        syncTime();
       }
       // listeners
-      video.addEventListener('ended', (event) => {
-        this.playing = false;
-      });
-      video.addEventListener('loadeddata', (event) => {
-        this.num_frames = parseInt(Math.floor(video.duration * this.fps));
-      });
-      video.addEventListener('timeupdate', (event) => {
-        if (!this.video_list[0].paused) {
-          for (var i = 1; i < this.video_list.length; ++i) {
-            let delta = Math.abs(this.video_list[i].currentTime - this.video_list[0].currentTime);
-            if (delta > 1.0/this.fps) {
-              console.log("Force sync", i);
-              this.video_list[i].currentTime = this.video_list[0].currentTime;
-            }
-          }
-        }
-      })
+      // video.addEventListener('ended', (event) => {
+      //   this.playing = false;
+      // });
+      // video.addEventListener('timeupdate', (event) => {
+      //   if (this.playing) {
+      //     for (var i = 1; i < this.video_list.length; ++i) {
+      //       let delta = Math.abs(this.video_list[i].currentTime - this.video_list[0].currentTime);
+      //       if (delta > 1.0/this.fps) {
+      //         console.log("Force sync", i);
+      //         this.video_list[i].currentTime = this.video_list[0].currentTime;
+      //       }
+      //     }
+      //   }
+      // })
     } else {
       // other videos should be muted
       video.muted = true;
@@ -116,7 +139,8 @@ class _MyVideoPlayer
       // Group selector
       if(this.selected_group === null) {
         this.selected_group = this.groups[0].name;
-        this.setVideos(this.groups[0].fps, this.groups[0].videos, this.groups[0].tags);
+        this.useGroup(this.groups[0]);
+        // this.setVideos(this.groups[0].fps, this.groups[0].videos, this.groups[0].tags);
       }
       if (this.comboflags === undefined) {
         this.comboflags = ComboFlags.PopupAlignLeft;
@@ -127,7 +151,8 @@ class _MyVideoPlayer
           let is_selected = (this.selected_group == this.groups[n].name);
           if (imgui.Selectable(this.groups[n].name, is_selected)) {
             this.selected_group = this.groups[n].name;
-            this.setVideos(this.groups[n].fps, this.groups[n].videos, this.groups[n].tags);
+            this.useGroup(this.groups[n]);
+            // this.setVideos(this.groups[n].fps, this.groups[n].videos, this.groups[n].tags);
           }
           if (is_selected) {
             imgui.SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
@@ -228,15 +253,26 @@ class _MyVideoPlayer
           }
         }
         // - Frame slider
+        if (this.num_frames === null && this.video_list.length > 0) {
+          let master_video = this.video_list[0];
+          if (master_video.readyState === 4) {
+            console.log(master_video.duration)
+            this.num_frames = parseInt(Math.round(master_video.duration * this.fps));
+          }
+        }
         imgui.SameLine();
         imgui.PushItemWidth(-1);
         imgui.SliderInt(
-          "##Player:slider", this.curr_iframe, 0, this.num_frames-1, null,
-          (newval)=> { this.seek_frame(newval); }
+          "##Player:slider", this.curr_iframe,
+          0, (this.num_frames === null) ? 0 : (this.num_frames-1),
+          null, (newval)=> { this.seek_frame(newval); }
         );
         // > Auto pause when press slider.
         let hovered = imgui.IsItemHovered();
         let mouse_down = imgui.IsMouseDown(0);
+        if (this.video_list.length > 0 && this.video_list[0].paused) {
+          this.playing = false;
+        }
         if (this.playing && hovered && mouse_down) {
           if (hovered && mouse_down) {
             this.wanna_play_after_release = true;
@@ -280,7 +316,7 @@ class _MyVideoPlayer
   seek_time(new_sec) {
     if (new_sec !== undefined && new_sec !== null) {
       // console.log("seek time", new_sec);
-      this.curr_iframe = Math.round(new_sec * this.fps);
+      this.curr_iframe = Math.floor(new_sec * this.fps);
       this.video_list.forEach(video => video.currentTime=new_sec);
     }
   }
