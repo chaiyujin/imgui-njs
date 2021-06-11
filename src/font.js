@@ -111,9 +111,41 @@ export class Font
                     }
                     else
                     {
-                        // wrap word
-                        lines.push(currentLine);
-                        currentLine = word;
+                        let wrap_word = true;
+                        if (word.length >= 5) {
+                            // find a position to break the word with '-'
+                            var l = 0;
+                            var r = word.length;
+                            var m = 0;
+                            while (l<=r) {
+                                m = parseInt((l+r)/2);
+                                let subword = word.substring(0, m) + '-';
+                                let potentialLine = currentLine.length ? currentLine + " " + subword : subword;
+                                let width = Math.ceil(this.ctx.measureText(potentialLine).width);
+                                // too small
+                                if (width < wrapWidth) {
+                                    l = m + 1;
+                                    m = l;
+                                } else if (width > wrapWidth) {
+                                    r = m - 1;
+                                    m = r;
+                                } else { break; }
+                            }
+                            // break word
+                            if (m >= 2) {
+                                let subword = word.substring(0, m) + '-';
+                                let potentialLine = currentLine.length ? currentLine + " " + subword : subword;
+                                lines.push(potentialLine);
+                                currentLine = word.substring(m);
+                                wrap_word = false;
+                            }
+                        }
+                        
+                        if (wrap_word) {
+                            // wrap word
+                            lines.push(currentLine);
+                            currentLine = word;
+                        }
                     }
                 }
                 lines.push(currentLine);

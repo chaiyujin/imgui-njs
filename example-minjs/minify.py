@@ -2,7 +2,9 @@ import os
 
 src_dir = "../src"
 dst_dir = "./scripts"
-dst_merged = "./imgui.min.js"
+dst_merged = "./imgui.js"
+dst_minify = "./imgui.min.js"
+minify_cmd = f"uglifyjs {dst_merged} --compress -o {dst_minify}"
 
 # the order is important
 files = [
@@ -135,6 +137,8 @@ os.makedirs(os.path.dirname(dst_merged), exist_ok=True)
 with open(dst_merged, "w") as fp:
     for line in merged_file_lines:
         fp.write(line)
+
+os.system(minify_cmd)
 
 
 # # raw process 

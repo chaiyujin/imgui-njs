@@ -1,4 +1,5 @@
 scripts/
+imgui.js
 *.jpg
 *.png
 *.mp4
