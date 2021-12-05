@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<!--  This is the browser index.html! -------------->
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- <link href="../example/www/index.css" rel="stylesheet"> -->
+  <link href="../example/www/fonts.css" rel="stylesheet">
+
+  <script src="./videosync.js" > </script>
+  <script src="./imgui.min.js" > </script>
+  <script src="./imgui-player.js" > </script>
+</head>
+
+<body>
+
+<!-- no title bar -->
+
+<div class='mediagroup' id='VOCA' fps='60'>
+  <video id='video0' playsinline preload="auto" src="./subtitle-sentence23.mp4" controls></video>
+  <video id='video1' playsinline preload="auto" src="./subtitle-sentence23.mp4" controls></video>
+</div>
+
+<div class='imgui-player' id='player-2'>
+</div>
+
+<!-- <canvas id="imgui-canvas-2" width=1024 height=512 style="background-color: black;"></canvas> -->
+
+<!--  scripts ----------------------------------------------------------->
+<script src="./index2.js" > </script>
+</body>
+</html>
