@@ -8,24 +8,23 @@
   <!-- <link href="../example/www/index.css" rel="stylesheet"> -->
   <link href="../example/www/fonts.css" rel="stylesheet">
 
-  <script src="./videosync.js" > </script>
-  <script src="./imgui.min.js" > </script>
-  <script src="./imgui-player.js" > </script>
+  <script src="./video_sync.js" > </script>
+  <script src="./video_group.js"> </script>
 </head>
 
 <body>
 
 <!-- no title bar -->
 
-<div class='mediagroup' id='VOCA' fps='60'>
-  <video id='video0' playsinline preload="auto" src="./subtitle-sentence23.mp4" controls></video>
-  <video id='video1' playsinline preload="auto" src="./subtitle-sentence23.mp4" controls></video>
+<div id='video-group' n_rows=2 row_height=384>
+  <source src="./ABOUT.mp4"></source>
+  <source src="./ABOUT-side.mp4"></source>
+  <source src="./ABOUT.mp4" tag="AasdasdasdasdasasdasdasdasdadasdasddasdasdasdBOUT"></source>
+  <source src="./ABOUT-side.mp4"></source>
 </div>
 
-<div class='imgui-player' id='player-2'>
-</div>
-
-<!-- <canvas id="imgui-canvas-2" width=1024 height=512 style="background-color: black;"></canvas> -->
+<!-- <video id='video0' preload="auto" src="./ABOUT.mp4" controls></video>
+<video id='video1' preload="auto" src="./ABOUT-side.mp4" controls></video> -->
 
 <!--  scripts ----------------------------------------------------------->
 <script src="./index2.js" > </script>

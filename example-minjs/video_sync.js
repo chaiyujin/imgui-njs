@@ -1,4 +1,3 @@
-
 class VideoSync {
   static STATE_PAUSED = 0;
   static STATE_PLAYING = 1;
@@ -7,20 +6,26 @@ class VideoSync {
 
   constructor(video_selectors, prim_selector) {
     this.videoList = [];
-    this.primIndex = null;
-    this.state = VideoSync.STATE_UNKNOWN;
-    this.next_state = VideoSync.STATE_UNKNOWN;
+    this.ontimeupdate = null;
     this.selectVideos(video_selectors, prim_selector);
   }
 
   reset() {
+    // * pause existed videos
+    this.videoList.forEach(video => { video.pause(); });
     // * reset videos and primary index
-    this.pause(0);
     this.videoList = [];
     this.primIndex = null;
     // * reset player state
     this.state = VideoSync.STATE_PAUSED;
     this.next_state = VideoSync.STATE_UNKNOWN;
+  }
+
+  getHTMLVideoElement(selector) {
+    if (selector instanceof HTMLVideoElement) {
+      return selector;
+    }
+    return document.querySelector(selector);
   }
 
   selectVideos(selectors, prim_sel) {
@@ -35,13 +40,13 @@ class VideoSync {
       prim_sel = selectors[0];
     }
     // * iter each selector
-    let prim = document.querySelector(prim_sel);
+    let prim = this.getHTMLVideoElement(prim_sel);
     if (prim === null) {
       console.error(`Wrong primary selector: ${prim_sel}`);
       return;
     }
     selectors.forEach(selector => {
-      let vid = document.querySelector(selector);
+      let vid = this.getHTMLVideoElement(selector);
       if (vid === null) { return; }
       if (vid === prim) {
         this.primIndex = this.videoList.length;
@@ -65,7 +70,7 @@ class VideoSync {
       // video.onplaying = (event) => { console.log("playing", video.id) };
       // video.onwaiting = (event) => { console.log("waiting", video.id) };
       // video.oncanplaythrough = (event) => {console.log("canplaythrough", video.id)}
-    }); 
+    });
   }
 
   // * ------------------------------------------------------------------------------------------------------------ * //
