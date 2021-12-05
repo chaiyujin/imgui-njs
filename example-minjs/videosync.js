@@ -65,21 +65,7 @@ class VideoSync {
       // video.onplaying = (event) => { console.log("playing", video.id) };
       // video.onwaiting = (event) => { console.log("waiting", video.id) };
       // video.oncanplaythrough = (event) => {console.log("canplaythrough", video.id)}
-    });
-    // * refresh state each frame
-    let step = (time) => {
-      if (this.state === VideoSync.STATE_SYNCING) {
-        const ready = this.allReady();
-        // * Play videos when all ready!
-        if (ready && this.next_state === VideoSync.STATE_PLAYING) {
-          console.log("PLAY");
-          this.videoList.forEach(video => video.play());
-          this.state = VideoSync.STATE_PLAYING;
-        }
-      }
-      window.requestAnimationFrame(step);
-    };
-    window.requestAnimationFrame(step);
+    }); 
   }
 
   // * ------------------------------------------------------------------------------------------------------------ * //
@@ -99,6 +85,24 @@ class VideoSync {
     return seeked && ready;
   }
 
+  waitAllReady() {
+    // console.log("waitAllReady")
+    let ready = false;
+    if (this.state === VideoSync.STATE_SYNCING) {
+      ready = this.allReady();
+      // * Play videos when all ready!
+      if (ready && this.next_state === VideoSync.STATE_PLAYING) {
+        console.log("PLAY");
+        this.videoList.forEach(video => video.play());
+        this.state = VideoSync.STATE_PLAYING;
+      }
+    }
+    // * refresh state each frame
+    if (!ready) {
+      window.requestAnimationFrame(() => this.waitAllReady());
+    }
+  }
+
   play(timestamp) {
     // * guard
     if (this.videoList.length == 0) { return; }
@@ -110,6 +114,8 @@ class VideoSync {
     this.state = VideoSync.STATE_SYNCING;
     this.next_state = VideoSync.STATE_PLAYING;
     prim.currentTime = timestamp;
+    // * Poll ready state
+    window.requestAnimationFrame(() => this.waitAllReady());
   }
 
   pause(timestamp) {
