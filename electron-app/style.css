@@ -1,30 +1,8 @@
-/* ==========================================================================
-   #Custom HTML5 Video Player
-   ========================================================================== */
+/* * =========================================================================== * */
+/* *  Custom HTML5 Video Player                                                  * */
+/* * =========================================================================== * */
 
-:root {
-  --youtube-red: #FE0900;
-}
-
-html {
-  box-sizing: border-box;
-  font-family: "YouTube Noto",Roboto,Arial,Helvetica,sans-serif;
-  height: 100%;
-}
-
-*, *::before, *::after {
-  box-sizing: inherit;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  height: 100%;
-  background-color:black;
-  color:white;
-}
-
-.video-container {
+.__yuki-video-container {
   right: 0;
   left: 0;
   bottom: 70px;
@@ -32,9 +10,17 @@ body {
   position: absolute;
   padding: 10px;
   overflow: auto;
+  background-color:black;
+  color:white;
+  overflow: hidden;
 }
 
-.video-controls {
+.__yuki-video-container .video-cell:hover {
+  box-shadow: rgb(186, 201, 206) 0px 1px 5px 0px;
+}
+
+.__yuki-video-controls {
+  box-sizing: border-box;
   right: 0;
   left: 0;
   bottom: 0;
@@ -42,22 +28,25 @@ body {
   height: 70px;
   padding: 10px;
   /* transition: all 0.2s ease; */
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
+  /* background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)); */
+  background-color: #474545;
+  background-image: linear-gradient(to bottom, rgba(1, 1, 0, 0.3), rgba(1, 1, 0, 0.5));
+  font-family: "YouTube Noto",Roboto,Arial,Helvetica,sans-serif;
   z-index: 100;
 }
 
-.video-controls.hide {
+.__yuki-video-controls.hide {
   opacity: 0;
   pointer-events: none;
 }
 
-.video-progress {
+.__yuki-video-controls .video-progress {
   position: relative;
   height: 8.4px;
   margin-bottom: 10px;
 }
 
-progress {
+.__yuki-video-controls progress {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -69,22 +58,22 @@ progress {
   top: 0;
 }
 
-progress::-webkit-progress-bar {
+.__yuki-video-controls progress::-webkit-progress-bar {
   background-color: #474545;
   border-radius: 2px;
 }
 
-progress::-webkit-progress-value {
-  background: var(--youtube-red);
+.__yuki-video-controls progress::-webkit-progress-value {
+  background: #FE0900;
   border-radius: 2px;
 }
 
-progress::-moz-progress-bar {
-  border: 1px solid var(--youtube-red);
-  background: var(--youtube-red);
+.__yuki-video-controls progress::-moz-progress-bar {
+  border: 1px solid #FE0900;
+  background: #FE0900;
 }
 
-.seek {
+.__yuki-video-controls .seek {
   position: absolute;
   top: 0;
   width: 100%;
@@ -92,11 +81,11 @@ progress::-moz-progress-bar {
   margin: 0;
 }
 
-.seek:hover+.seek-tooltip {
+.__yuki-video-controls .seek:hover+.seek-tooltip {
   display: block;
 }
 
-.seek-tooltip {
+.__yuki-video-controls .seek-tooltip {
   display: none;
   position: absolute;
   top: -50px;
@@ -110,36 +99,36 @@ progress::-moz-progress-bar {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.bottom-controls {
+.__yuki-video-controls .bottom-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.left-controls {
+.__yuki-video-controls .left-controls {
   display: flex;
   align-items: center;
   color: #fff;
 }
 
-.volume-controls {
+.__yuki-video-controls .volume-controls {
   display: flex;
   align-items: center;
   margin-right: 10px;
 }
 
-.volume-controls input {
+.__yuki-video-controls .volume-controls input {
   width: 100px;
   opacity: 1;
   transition: all 0.4s ease;
 }
 
-.volume-controls:hover input, .volume-controls input:focus {
+.__yuki-video-controls .volume-controls:hover input, .volume-controls input:focus {
   width: 100px;
   opacity: 1;
 }
 
-button.button-controls {
+.__yuki-video-controls button.button-controls {
   cursor: pointer;
   position: relative;
   margin-right: 7px;
@@ -150,11 +139,11 @@ button.button-controls {
   background-color: transparent;
 }
 
-button.button-controls * {
+.__yuki-video-controls button.button-controls * {
   pointer-events: none;
 }
 
-button.button-controls::before {
+.__yuki-video-controls button.button-controls::before {
   content: attr(data-title);
   position: absolute;
   display: none;
@@ -168,41 +157,15 @@ button.button-controls::before {
   white-space: pre;
 }
 
-button.button-controls:hover::before {
+.__yuki-video-controls button.button-controls:hover::before {
   display: inline-block;
-}
-
-.fullscreen-button {
-  margin-right: 0;
-}
-
-.pip-button svg {
-  width: 26px;
-  height: 26px;
-}
-
-.playback-animation {
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-left: -40px;
-  margin-top: -40px;
-  width: 80px;
-  height: 80px;
-  border-radius: 80px;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
 }
 
 .hidden {
   display: none;
 }
 
-input[type=range].slider {
+.__yuki-video-controls input[type=range].slider {
   -webkit-appearance: none;
   -moz-appearance: none;
   height: 8.4px;
@@ -210,11 +173,11 @@ input[type=range].slider {
   cursor: pointer;
 }
 
-input[type=range].slider:focus {
+.__yuki-video-controls input[type=range].slider:focus {
   outline: none;
 }
 
-input[type=range].slider::-webkit-slider-runnable-track {
+.__yuki-video-controls input[type=range].slider::-webkit-slider-runnable-track {
   width: 100%;
   cursor: pointer;
   border-radius: 1.3px;
@@ -222,21 +185,21 @@ input[type=range].slider::-webkit-slider-runnable-track {
   transition: all 0.4s ease;
 }
 
-input[type=range].slider::-webkit-slider-thumb {
+.__yuki-video-controls input[type=range].slider::-webkit-slider-thumb {
   height: 16px;
   width: 16px;
   border-radius: 16px;
-  background: var(--youtube-red);
+  background: #FE0900;
   cursor: pointer;
   -webkit-appearance: none;
   margin-left: -1px;
 }
 
-input[type=range].slider:focus::-webkit-slider-runnable-track {
+.__yuki-video-controls input[type=range].slider:focus::-webkit-slider-runnable-track {
   background: transparent;
 }
 
-input[type=range].slider::-moz-range-track {
+.__yuki-video-controls input[type=range].slider::-moz-range-track {
   width: 100%;
   height: 8.4px;
   cursor: pointer;
@@ -245,21 +208,21 @@ input[type=range].slider::-moz-range-track {
   border-radius: 1.3px;
 }
 
-input[type=range].slider::-moz-range-thumb {
+.__yuki-video-controls input[type=range].slider::-moz-range-thumb {
   height: 14px;
   width: 14px;
   border-radius: 50px;
-  border: 1px solid var(--youtube-red);
-  background: var(--youtube-red);
+  border: 1px solid #FE0900;
+  background: #FE0900;
   cursor: pointer;
   margin-top: 5px;
 }
 
-input[type=range].slider:focus::-moz-range-track {
+.__yuki-video-controls input[type=range].slider:focus::-moz-range-track {
   outline: none;
 }
 
-svg {
+.__yuki-video-controls svg {
   width: 28px;
   height: 28px;
   fill: #fff;
@@ -267,29 +230,25 @@ svg {
   cursor: pointer;
 }
 
-input[type=range].volume {
+.__yuki-video-controls input[type=range].volume {
   height: 5px;
   background-color: #fff;
 }
 
-input[type=range].volume::-webkit-slider-runnable-track {
+.__yuki-video-controls input[type=range].volume::-webkit-slider-runnable-track {
   background-color: transparent;
 }
 
-input[type=range].volume::-webkit-slider-thumb {
+.__yuki-video-controls input[type=range].volume::-webkit-slider-thumb {
   margin-left: 0;
   height: 14px;
   width: 14px;
   background: #fff;
 }
 
-input[type=range].volume::-moz-range-thumb {
+.__yuki-video-controls input[type=range].volume::-moz-range-thumb {
   border: 1px solid #fff;
   background: #fff;
-}
-
-.video-cell:hover {
-  box-shadow: rgb(186, 201, 206) 0px 1px 5px 0px;
 }
 
 .dropzone {

@@ -1,5 +1,5 @@
 class VideoGroup {
-  static CSS_NAME_VIDEO_CONTAINER = "video-group-container";
+  static CSS_NAME_VIDEO_CONTAINER = "video-container";
 
   constructor(selector) {
     this.init(selector);

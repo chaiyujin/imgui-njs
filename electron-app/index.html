@@ -5,12 +5,23 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
+    <link href="./style.css" rel="stylesheet">
+    <title>Video Player</title>
   </head>
+
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+    <!-- no title bar -->
+
+    <div id='video-group' n-rows=1 row-height=384 ondrop="dragOverHandler()">
+      <source src="./ABOUT.mp4"></source>
+      <source src="./ABOUT1-side.mp4"></source>
+      <source src="./ABOUT.mp4" tag="AASdasdasdasdasdasdasasdasdasdasdadasdasddasdasdasdBOUT"></source>
+    </div>
+
+    <div id="dropzone", class="dropzone"></div>
+
+    <script src="./video_sync.js" > </script>
+    <script src="./video_group.js"> </script>
+    <script src="./index2.js" > </script>
   </body>
 </html>
