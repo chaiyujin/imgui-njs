@@ -3,9 +3,40 @@
 
   let group = new VideoGroup("div#video-group");
 
-  // Tell user about lacking of API.
-  // let HAS_VIDEO_FRAME_CALLBACK = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
-  // if (!HAS_VIDEO_FRAME_CALLBACK) {
-  //   return alert('Your browser does not support the `Video.requestVideoFrameCallback()` API.\nPlease use Chrome for better video synchronization!');
-  // }
+  var dropZone = document.getElementById('dropzone');
+  function showDropZone() {
+    dropZone.style.display = "block";
+  }
+  function hideDropZone() {
+    dropZone.style.display = "none";
+  }
+  function allowDrag(e) {
+    if (true) {  // Test that the item being dragged is a valid one
+        e.dataTransfer.dropEffect = 'copy';
+        e.preventDefault();
+    }
+  }
+  function handleDrop(ev) {
+    ev.preventDefault();
+    hideDropZone();
+
+    for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+      console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+    }
+  }
+  // 1
+  window.addEventListener('dragenter', function(e) {
+    showDropZone();
+  });
+  // 2
+  dropZone.addEventListener('dragenter', allowDrag);
+  dropZone.addEventListener('dragover', allowDrag);
+  // 3
+  dropZone.addEventListener('dragleave', function(e) {
+    console.log('dragleave');
+    hideDropZone();
+  });
+  // 4
+  dropZone.addEventListener('drop', handleDrop);
+
 })();
