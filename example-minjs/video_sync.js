@@ -65,6 +65,7 @@ class VideoSync {
     prim.onpause = (event) => { this.pause() };
     prim.onended = (event) => { this.pause() };
     prim.onseeking = (event) => { this.seekTime(this.videoList[this.primIndex].currentTime, true); };
+    prim.onratechange = (event) => { this.changeRate(this.videoList[this.primIndex].playbackRate, true); }
     this.videoList.forEach((video) => {
       if (video !== prim) { video.muted = true; }
       // video.onplaying = (event) => { console.log("playing", video.id) };
@@ -142,7 +143,6 @@ class VideoSync {
     if (this.videoList.length == 0) { return ; }
     if (timestamp === undefined || timestamp === null) { return; }
 
-    // console.log("seek time", timestamp);
     const prim = this.videoList[this.primIndex];
     this.videoList.forEach((video) => {
       // * ignore primary
@@ -151,5 +151,18 @@ class VideoSync {
       }
       video.currentTime = timestamp;
     });
+  }
+
+  changeRate(rate, noprim) {
+    // guard
+    if (this.videoList.length == 0) { return ; }
+    if (rate === undefined || rate === null) { return; }
+
+    const prim = this.videoList[this.primIndex];
+    this.videoList.forEach((video) => {
+      if (noprim && video == prim) { return; }
+      video.playbackRate = rate;
+    });
+
   }
 };

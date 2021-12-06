@@ -1,15 +1,24 @@
 class VideoGroup {
-  constructor(group_selector) {
-    this.init(group_selector);
+  constructor(selector) {
+    this.init(selector);
+    // * create VideoSync
+    this.video_sync = new VideoSync(this.videoList, this.videoList[0]);
   }
 
-  init(group_selector) {
+  init(selector) {
     // * select group
-    this.group = document.querySelector(group_selector);
+    this.group = document.querySelector(selector);
     if (this.group === null) {
-      console.error(`Failed to find group: ${group_selector}`);
+      console.error(`Failed to find group: ${selector}`);
       return;
     }
+    // * there videos in group already
+    const videos = this.group.getElementsByTagName("video");
+    if (videos.length > 0) {
+      this.videoList = videos;
+      return;
+    }
+
     // * fetch sources
     const sources = this.group.getElementsByTagName("source");
     this.n_rows = this.group.getAttribute("n_rows");
@@ -45,7 +54,7 @@ class VideoGroup {
     this.videoList = [];
     for (let r = 0; r < this.n_rows; ++r) {
       var divRow = document.createElement("div");
-      divRow.style.display = "flex";
+      divRow.style.display = "inline-flex";
       divRow.style.textAlign = "center";
       for (let c = 0; c < this.n_cols; ++c) {
         var divCell = document.createElement("div");
@@ -73,8 +82,8 @@ class VideoGroup {
             if (w === 0) {
               w = h * W / H;
             }
-            console.log(event.target.parentElement);
             event.target.parentElement.style.width = `${Math.ceil(w)}px`;
+            console.log(event.target.parentElement.offsetWidth);
           };
           divCell.appendChild(video);
           divCell.appendChild(tag);
@@ -83,9 +92,9 @@ class VideoGroup {
         divRow.appendChild(divCell);
       }
       this.group.appendChild(divRow);
+      this.group.appendChild(document.createElement("div"));
     }
-
-    // * create VideoSync
-    this.video_sync = new VideoSync(this.videoList, this.videoList[0]);
+    this.group.style.margin = '0 auto';
+    this.group.style.textAlign = 'center';
   }
 };
