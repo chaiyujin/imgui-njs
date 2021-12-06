@@ -7,6 +7,7 @@ class VideoSync {
   constructor(video_selectors, prim_selector) {
     this.videoList = [];
     this.ontimeupdate = null;
+    this.onended = null;
     this.selectVideos(video_selectors, prim_selector);
   }
 
@@ -16,8 +17,9 @@ class VideoSync {
     // * reset videos and primary index
     this.videoList = [];
     this.primIndex = null;
+    this.primVideo = null;
     // * reset player state
-    this.state = VideoSync.STATE_PAUSED;
+    this.state = VideoSync.STATE_UNKNOWN;
     this.next_state = VideoSync.STATE_UNKNOWN;
   }
 
@@ -63,7 +65,7 @@ class VideoSync {
     // * sync callbacks
     prim.onplay  = (event) => { this.play()  };
     prim.onpause = (event) => { this.pause() };
-    prim.onended = (event) => { this.pause() };
+    prim.onended = (event) => { this.pause(); if (this.onended) { this.onended(); } };
     prim.onseeking = (event) => { this.seekTime(this.videoList[this.primIndex].currentTime, true); };
     prim.onratechange = (event) => { this.changeRate(this.videoList[this.primIndex].playbackRate, true); }
     this.videoList.forEach((video) => {
@@ -72,6 +74,22 @@ class VideoSync {
       // video.onwaiting = (event) => { console.log("waiting", video.id) };
       // video.oncanplaythrough = (event) => {console.log("canplaythrough", video.id)}
     });
+    this.primVideo = prim;
+    this.state = VideoSync.STATE_PAUSED;
+
+    // * time info updating
+    const updateTimeInfo = (now, metadata) => {
+      if (this.primVideo !== null) {
+        if (this.ontimeupdate) {
+          this.ontimeupdate(metadata.mediaTime, this.primVideo.duration);
+        }
+        this.primVideo.requestVideoFrameCallback(updateTimeInfo);
+      }
+    }
+    // master video
+    if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+      this.primVideo.requestVideoFrameCallback(updateTimeInfo);
+    }
   }
 
   // * ------------------------------------------------------------------------------------------------------------ * //

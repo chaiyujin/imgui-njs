@@ -24,7 +24,7 @@ body {
   color:white;
 }
 
-.video-container {
+.video-group-container {
   right: 0;
   left: 0;
   bottom: 70px;
@@ -286,4 +286,8 @@ input[type=range].volume::-webkit-slider-thumb {
 input[type=range].volume::-moz-range-thumb {
   border: 1px solid #fff;
   background: #fff;
+}
+
+.video-cell:hover {
+  box-shadow: rgb(186, 201, 206) 0px 1px 5px 0px;
 }
